@@ -1,0 +1,22 @@
+.form  {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 10px;
+}
+
+.form input {
+    max-width: 200px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.submitBtn {
+    max-width: 100px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    padding: 5px;
+    cursor: pointer;
+}

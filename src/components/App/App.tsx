@@ -29,6 +29,11 @@ function App() {
       return;
     }
 
+    if (!searchValue) {
+      alert("searchValue can`t be null");
+      return;
+    }
+
     if (!validateValue([columnValue, rowValue, searchValue])) {
       alert(
         "all fields must be fill or your value isn`t correct (you should write a number)"

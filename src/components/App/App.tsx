@@ -30,7 +30,7 @@ function App() {
     }
 
     if (!searchValue) {
-      alert("searchValue can`t be null");
+      alert("value for search can`t be null");
       return;
     }
 

@@ -11,8 +11,8 @@ export interface IvalueProvider {
   columns?: Iline[];
   createRowByClick?: () => void;
   removeRowByClick?: (id: string) => void;
-
   saveCell?: (e: ChangeEvent) => void;
+  findValue?: number;
 }
 
 export interface Icell {

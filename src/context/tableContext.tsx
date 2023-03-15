@@ -28,6 +28,18 @@ export const TableProvider = ({ children }: any) => {
 
   const removeRowByClick = (id: string) => {
     const indexDelete = rows.findIndex(({ id: idRow }) => idRow === id);
+    rows[indexDelete].cells.forEach((cell) => {
+      columns.forEach((column) => {
+        const curCellIndex = column.cells.findIndex(
+          (cellColumn) => cellColumn.id === cell.id
+        );
+
+        if (!(curCellIndex < 0)) {
+          column.cells.splice(curCellIndex, 1);
+        }
+      });
+    });
+
     rows.splice(indexDelete, 1);
 
     setRows([...rows]);
@@ -39,6 +51,7 @@ export const TableProvider = ({ children }: any) => {
     const { id: cellId = "" } = target?.dataset;
     const value = target?.value;
     const newCell: Icell = { id: cellId, amount: +value };
+
     const curRow = rows.find(({ id }) => id === rowId);
     const curColumn = columns.find(({ id }) => id === columnId);
 
@@ -80,6 +93,7 @@ export const TableProvider = ({ children }: any) => {
         createRowByClick,
         removeRowByClick,
         saveCell,
+        findValue,
       }}
     >
       {children}

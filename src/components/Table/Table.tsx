@@ -1,22 +1,49 @@
 import "./table.css";
-import React, { FC, ReactElement } from "react";
+import React, { FC, MouseEventHandler, ReactElement } from "react";
 import { useTable } from "../../context/tableContext";
 import { AiFillDelete } from "react-icons/ai";
-import { nanoid } from "nanoid";
 
 const Table: FC = () => {
-  const { rows, columns, createRowByClick, removeRowByClick, saveCell } =
-    useTable();
+  const {
+    rows,
+    columns,
+    createRowByClick,
+    removeRowByClick,
+    saveCell,
+    findValue = 0,
+  } = useTable();
 
   const renderRowsInput: (rowId: string, amount: number) => ReactElement[] = (
     rowId,
     amount
   ) => {
     const rowsArr: ReactElement[] = [];
-
     for (let i = 0; i < amount; i++) {
+      const curRow = rows?.find((row) => row.id === rowId);
+
+      const curCell = curRow?.cells.find(
+        (cell) => cell.id === `${columns?.[i].id}${rowId}`
+      ) || { amount: 0 };
+
+      const sumCell =
+        curRow?.cells.reduce((sum, cell) => {
+          sum += cell.amount;
+          return sum;
+        }, 0) || 0;
+
+      const procentByOther = Math.round((curCell.amount * 100) / sumCell) || 0;
+      const findClass =
+        curCell.amount !== 0 && curCell.amount < +findValue
+          ? "selectionGradient"
+          : "";
+
       rowsArr.push(
-        <th key={i} data-row-id={rowId} data-column-id={columns?.[i].id}>
+        <th
+          key={i}
+          data-row-id={rowId}
+          data-column-id={columns?.[i].id}
+          className={findClass}
+        >
           <input
             className="cell"
             type="text"
@@ -25,11 +52,29 @@ const Table: FC = () => {
             data-id={`${columns?.[i].id}${rowId}`}
             onChange={saveCell}
           />
+          <div className="procentByOther">{procentByOther}%</div>
         </th>
       );
     }
 
     return rowsArr;
+  };
+
+  const toggleProcent: (id: string) => void = (id) => {
+    try {
+      const cells = document.querySelectorAll(`[data-row-id *= ${id}]`);
+
+      cells.forEach((cell) => {
+        const procEl = cell?.lastElementChild;
+        const procElValue = procEl?.textContent?.slice(0, -1) || "";
+        const procElValueNumber = +procElValue || 0;
+
+        if (procElValueNumber > 0) cell?.classList.toggle("selectionGradient");
+        procEl?.classList.toggle("procentByOtherShow");
+      });
+    } catch {
+      console.log("trobules with DOM");
+    }
   };
 
   const renderSumValue: (id: string) => number = (id) => {
@@ -46,8 +91,6 @@ const Table: FC = () => {
   const renderAverageValue: (id: string) => number = (id) => {
     const curColumn = columns?.filter(({ id: columnId }) => columnId === id)[0];
 
-    if (!curColumn?.cells?.length) return 0;
-
     const resultObj = curColumn?.cells?.reduce(
       (result, cell) => {
         result.result += cell.amount;
@@ -61,7 +104,9 @@ const Table: FC = () => {
       { counter: 0, result: 0 }
     ) ?? { counter: 0, result: 0 };
 
-    return resultObj.result / resultObj.counter;
+    const calcValue = resultObj.result / resultObj.counter;
+
+    return isNaN(calcValue) ? 0 : +calcValue.toFixed(2);
   };
 
   return (
@@ -86,7 +131,14 @@ const Table: FC = () => {
               <tr key={id}>
                 <th>{name}</th>
                 {renderRowsInput(id, columns?.length ?? 0)}
-                <th data-row-id={id}>{renderSumValue(id)}</th>
+                <th
+                  className="sumCell"
+                  data-row-id={id}
+                  onMouseLeave={() => toggleProcent(id)}
+                  onMouseEnter={() => toggleProcent(id)}
+                >
+                  {renderSumValue(id)}
+                </th>
                 <th
                   className="delete-icon"
                   onClick={() => removeRowByClick && removeRowByClick(id)}

@@ -103,3 +103,24 @@ tr:last-child td.last {
     background: none;
     cursor: pointer;
 }
+
+.procentByOther {
+    margin-top: 10px;
+    display: none;
+}
+
+.procentByOtherShow {
+    display: block;
+}
+
+.selectionGradient {
+    background: linear-gradient(0deg, rgba(176,176,176,.7) 39%, rgba(0,0,0,.7) 68%);
+}
+
+.sumCell {
+    cursor: pointer;
+}
+
+.sumCell:hover {
+    background: gainsboro;
+}

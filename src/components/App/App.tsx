@@ -18,13 +18,23 @@ function App() {
       row: { value: rowValue },
       searchValue: { value: searchValue },
     } = elements;
-    //
-    // if (validateValue([columnValue, rowValue, searchValue])) {
-    //   alert(
-    //     "all fields must be fill or your value isn`t correct (you should write a number)"
-    //   );
-    //   return;
-    // }
+
+    if (
+      +columnValue < 0 ||
+      +columnValue > 100 ||
+      +rowValue < 0 ||
+      +rowValue > 100
+    ) {
+      alert("value can`t be less then zero and more then hundred");
+      return;
+    }
+
+    if (!validateValue([columnValue, rowValue, searchValue])) {
+      alert(
+        "all fields must be fill or your value isn`t correct (you should write a number)"
+      );
+      return;
+    }
 
     if (!createTable) return;
 
